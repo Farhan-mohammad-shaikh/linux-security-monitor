@@ -3,7 +3,7 @@ from pathlib import Path
 from config import REPORT_DIR
 
 
-def generate_text_report(system_status, listening_ports, ssh_status):
+def generate_text_report(system_status, listening_ports, ssh_status, detection_result):
     Path(REPORT_DIR).mkdir(exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -52,6 +52,21 @@ def generate_text_report(system_status, listening_ports, ssh_status):
 
         report.write("\nAlerts\n")
         report.write("-" * 6 + "\n")
+
+        report.write("\nSecurity Assessment\n")
+        report.write("-" * 19 + "\n")
+        report.write(f"Risk Level: {detection_result['risk_level']}\n")
+        report.write(f"Security Score: {detection_result['score']}/100\n")
+
+        if detection_result["findings"]:
+            report.write("\nFindings:\n")
+            for finding in detection_result["findings"]:
+                report.write(
+                    f"[{finding['severity'].upper()}] "
+                    f"{finding['title']} - {finding['description']}\n"
+                )
+        else:
+            report.write("No security findings detected.\n")
 
         all_alerts = []
         all_alerts.extend(system_status["alerts"])

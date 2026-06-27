@@ -1,5 +1,6 @@
 from modules.system_monitor import get_system_status
 from modules.network_monitor import get_listening_ports
+from modules.ssh_monitor import get_ssh_authentication_status
 from modules.report_generator import generate_text_report
 
 
@@ -9,6 +10,7 @@ def main():
 
     system_status = get_system_status()
     listening_ports = get_listening_ports()
+    ssh_status = get_ssh_authentication_status()
 
     print("\nSystem Status")
     print("-" * 13)
@@ -19,7 +21,6 @@ def main():
 
     print("\nListening Ports")
     print("-" * 15)
-
     if listening_ports:
         for port in listening_ports:
             print(
@@ -29,7 +30,28 @@ def main():
     else:
         print("No listening ports detected.")
 
-    report_path = generate_text_report(system_status, listening_ports)
+    print("\nSSH Authentication")
+    print("-" * 18)
+    if ssh_status["failed_logins"]:
+        print("Failed login attempts:")
+        for ip, count in ssh_status["failed_logins"].items():
+            print(f"{ip}: {count}")
+    else:
+        print("No failed SSH login attempts found.")
+
+    if ssh_status["successful_logins"]:
+        print("\nRecent successful SSH logins:")
+        for login in ssh_status["successful_logins"][-5:]:
+            print(f"{login['user']} from {login['ip']}")
+    else:
+        print("No successful SSH logins found.")
+
+    if ssh_status["alerts"]:
+        print("\nSSH Alerts:")
+        for alert in ssh_status["alerts"]:
+            print(f"- {alert}")
+
+    report_path = generate_text_report(system_status, listening_ports, ssh_status)
 
     print("\nReport generated:")
     print(report_path)

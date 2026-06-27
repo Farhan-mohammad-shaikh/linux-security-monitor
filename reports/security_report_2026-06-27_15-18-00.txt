@@ -1,0 +1,30 @@
+Sentinel Linux Security Report
+================================
+Generated at: 2026-06-27 15:18:00.442977
+
+System Status
+-------------
+CPU Usage: 5.2%
+Memory Usage: 29.6%
+Disk Usage: 37.9%
+Uptime: 950 seconds
+
+Listening Network Ports
+-----------------------
+10.65.203.1:53 | Process: unknown | PID: None
+0.0.0.0:1883 | Process: unknown | PID: None
+0.0.0.0:1880 | Process: node-red | PID: 993
+127.0.0.1:4123 | Process: code | PID: 9780
+127.0.0.53:53 | Process: unknown | PID: None
+:::1883 | Process: unknown | PID: None
+127.0.0.1:46515 | Process: unknown | PID: None
+127.0.0.54:53 | Process: unknown | PID: None
+
+SSH Authentication
+------------------
+No failed SSH login attempts found.
+No successful SSH logins found.
+
+Alerts
+------
+No alerts detected.

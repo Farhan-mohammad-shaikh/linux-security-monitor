@@ -3,7 +3,7 @@ from pathlib import Path
 from config import REPORT_DIR
 
 
-def generate_text_report(system_status, listening_ports):
+def generate_text_report(system_status, listening_ports, ssh_status):
     Path(REPORT_DIR).mkdir(exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -33,13 +33,34 @@ def generate_text_report(system_status, listening_ports):
         else:
             report.write("No listening ports detected.\n")
 
+        report.write("\nSSH Authentication\n")
+        report.write("-" * 18 + "\n")
+
+        if ssh_status["failed_logins"]:
+            report.write("Failed login attempts:\n")
+            for ip, count in ssh_status["failed_logins"].items():
+                report.write(f"{ip}: {count}\n")
+        else:
+            report.write("No failed SSH login attempts found.\n")
+
+        if ssh_status["successful_logins"]:
+            report.write("\nRecent successful SSH logins:\n")
+            for login in ssh_status["successful_logins"][-5:]:
+                report.write(f"{login['user']} from {login['ip']}\n")
+        else:
+            report.write("No successful SSH logins found.\n")
+
         report.write("\nAlerts\n")
         report.write("-" * 6 + "\n")
 
-        if system_status["alerts"]:
-            for alert in system_status["alerts"]:
+        all_alerts = []
+        all_alerts.extend(system_status["alerts"])
+        all_alerts.extend(ssh_status["alerts"])
+
+        if all_alerts:
+            for alert in all_alerts:
                 report.write(f"- {alert}\n")
         else:
-            report.write("No system alerts detected.\n")
+            report.write("No alerts detected.\n")
 
     return str(report_path)

@@ -1,6 +1,7 @@
 from modules.system_monitor import get_system_status
 from modules.network_monitor import get_listening_ports
 from modules.ssh_monitor import get_ssh_authentication_status
+from modules.process_monitor import get_process_status
 from modules.detection_engine import run_detection
 from modules.report_generator import generate_text_report
 
@@ -18,14 +19,15 @@ def print_listening_ports(listening_ports):
     print("\nListening Ports")
     print("-" * 15)
 
-    if listening_ports:
-        for port in listening_ports:
-            print(
-                f"{port['ip']}:{port['port']} | "
-                f"{port['process']} | PID: {port['pid']}"
-            )
-    else:
+    if not listening_ports:
         print("No listening ports detected.")
+        return
+
+    for port in listening_ports:
+        print(
+            f"{port['ip']}:{port['port']} | "
+            f"{port['process']} | PID: {port['pid']}"
+        )
 
 
 def print_ssh_status(ssh_status):
@@ -49,6 +51,32 @@ def print_ssh_status(ssh_status):
     if ssh_status["alerts"]:
         print("\nSSH Alerts:")
         for alert in ssh_status["alerts"]:
+            print(f"- {alert}")
+
+
+def print_process_status(process_status):
+    print("\nProcess Monitoring")
+    print("-" * 18)
+
+    print("Top CPU Processes:")
+    for process in process_status["top_cpu_processes"]:
+        print(
+            f"PID {process['pid']} | {process['name']} | "
+            f"CPU {process['cpu_percent']}% | "
+            f"MEM {process['memory_percent']}%"
+        )
+
+    print("\nTop Memory Processes:")
+    for process in process_status["top_memory_processes"]:
+        print(
+            f"PID {process['pid']} | {process['name']} | "
+            f"CPU {process['cpu_percent']}% | "
+            f"MEM {process['memory_percent']}%"
+        )
+
+    if process_status["alerts"]:
+        print("\nProcess Alerts:")
+        for alert in process_status["alerts"]:
             print(f"- {alert}")
 
 
@@ -76,11 +104,18 @@ def main():
     system_status = get_system_status()
     listening_ports = get_listening_ports()
     ssh_status = get_ssh_authentication_status()
-    detection_result = run_detection(system_status, listening_ports, ssh_status)
+    process_status = get_process_status()
+
+    detection_result = run_detection(
+        system_status,
+        listening_ports,
+        ssh_status
+    )
 
     print_system_status(system_status)
     print_listening_ports(listening_ports)
     print_ssh_status(ssh_status)
+    print_process_status(process_status)
     print_security_assessment(detection_result)
 
     report_path = generate_text_report(

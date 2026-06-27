@@ -41,25 +41,30 @@ This project performs basic host-based security monitoring by collecting Linux s
 ---
 
 ## Project Structure
+
+```text
 linux-security-monitor/
 │
 ├── modules/
-│ ├── system_monitor.py
-│ ├── network_monitor.py
-│ ├── ssh_monitor.py
-│ ├── process_monitor.py
-│ ├── detection_engine.py
-│ └── report_generator.py
+│   ├── __init__.py
+│   ├── system_monitor.py
+│   ├── network_monitor.py
+│   ├── ssh_monitor.py
+│   ├── process_monitor.py
+│   ├── detection_engine.py
+│   └── report_generator.py
 │
 ├── reports/
-├── screenshots/
 ├── sample_logs/
+├── screenshots/
 │
-├── main.py
+├── .gitignore
 ├── config.py
-├── requirements.txt
-└── README.md
-
+├── LICENSE
+├── main.py
+├── README.md
+└── requirements.txt
+```
 
 ## Installation
 
